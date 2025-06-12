@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Formulario Avanzado de Contacto</title>
+<link rel="stylesheet" href="css/style2.css" />
+</head>
+<body>
+
+<section class="contact-form">
+  <div class="container">
+    <h2>Contáctanos</h2>
+    <form id="advancedForm" action="tu-proceso.php" method="POST" novalidate>
+      
+      <div class="form-group">
+        <label for="nombre">Nombre completo:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" required minlength="3" maxlength="50" />
+      </div>
+      
+      <div class="form-group">
+        <label for="rut">RUT (Chile):</label>
+        <input type="text" id="rut" name="rut" placeholder="12.345.678-9" required />
+        <small class="error" id="rutError"></small>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Correo electrónico:</label>
+        <input type="email" id="email" name="email" placeholder="tuemail@ejemplo.com" required />
+      </div>
+      
+      <div class="form-group">
+        <label for="telefono">Teléfono (opcional):</label>
+        <input type="tel" id="telefono" name="telefono" placeholder="Ej. +56912345678"
+       pattern="^\+56\d{8}$" />
+
+      
+      <div class="form-group">
+        <label for="mensaje">Mensaje:</label>
+        <textarea id="mensaje" name="mensaje" rows="6" placeholder="Escribe tu mensaje aquí..." required minlength="10" maxlength="500"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Tipo de consulta:</label>
+        <div class="opciones">
+          <label><input type="radio" name="tipo" value="general" required /> General</label>
+          <label><input type="radio" name="tipo" value="soporte" /> Soporte</label>
+          <label><input type="radio" name="tipo" value="ventas" /> Ventas</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="departamento">Departamento:</label>
+        <select id="departamento" name="departamento" required>
+          <option value="">Seleccione un departamento</option>
+          <option value="ventas">Ventas</option>
+          <option value="soporte">Soporte técnico</option>
+          <option value="administracion">Administración</option>
+        </select>
+      </div>
+      <div class="form-group checkbox">
+        <input type="checkbox" id="terminos" name="terminos" required />
+        <label for="terminos">Acepto los <a href="#">términos y condiciones</a></label>
+      </div>
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+</section>
+
+<script>
+  function validarRUT(rut) {
+    const valor = rut.replace(/\./g, '').replace('-', '');
+    if (valor.length < 8 || valor.length > 10) return false;
+
+    const cuerpo = valor.slice(0, -1);
+    const dv = valor.slice(-1).toUpperCase();
+    let suma = 0;
+    let multiplo = 2;
+    for (let i = cuerpo.length - 1; i >= 0; i--) {
+      suma += parseInt(cuerpo.charAt(i)) * multiplo;
+      multiplo = multiplo === 7 ? 2 : multiplo + 1;
+    }
+
+    const dvCalculado = 11 - (suma % 11);
+    const dvEsperado = dvCalculado === 11 ? '0' :
+                        dvCalculado === 10 ? 'K' : dvCalculado.toString();
+
+    return dv === dvEsperado;
+  }
+  document.getElementById('advancedForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const rutInput = document.getElementById('rut');
+    const rutError = document.getElementById('rutError');
+
+    if (!validarRUT(rutInput.value)) {
+      rutError.textContent = 'RUT inválido.';
+      rutInput.focus();
+      return;
+    } else {
+      rutError.textContent = '';
+    }
+    if (!this.checkValidity()) {
+      alert('Por favor, completa todos los campos requeridos correctamente.');
+      return;
+    }
+    alert('Formulario enviado correctamente.');
+    this.submit();
+  });
+</script>
+
+</body>
+</html>
